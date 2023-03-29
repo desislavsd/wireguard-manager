@@ -1,0 +1,42 @@
+query Users {
+  data: users {
+    ...User
+  }
+}
+
+query User($id: ID!) {
+  data: node(id: $id) {
+    ...User
+  }
+}
+
+mutation CreateUser($input: CreateUserInput!) {
+  mutation: createUser(input: $input) {
+    clientMutationId
+    data: user {
+      ...User
+    }
+  }
+}
+
+mutation UpdateUser($input: UpdateUserInput!) {
+  mutation: updateUser(input: $input) {
+    clientMutationId
+    data: user {
+      ...User
+    }
+  }
+}
+
+mutation DeleteUser($input: DeleteUserInput!) {
+  mutation: deleteUser(input: $input) {
+    clientMutationId
+  }
+}
+
+fragment User on User {
+  id
+  email
+  createdAt
+  updatedAt
+}

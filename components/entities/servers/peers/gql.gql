@@ -1,0 +1,60 @@
+query Peers($serverId: ID!) {
+  data: node(id: $serverId) {
+    ... on Server {
+      data: peers {
+        ...PeerWithoutServer
+      }
+      ...ServerWithoutPeers
+    }
+  }
+}
+
+query Peer($id: ID!) {
+  data: node(id: $id) {
+    ...Peer
+  }
+}
+
+mutation CreatePeer($input: CreatePeerInput!) {
+  mutation: createPeer(input: $input) {
+    clientMutationId
+    data: peer {
+      ...Peer
+    }
+  }
+}
+
+mutation UpdatePeer($input: UpdatePeerInput!) {
+  mutation: updatePeer(input: $input) {
+    clientMutationId
+    data: peer {
+      ...Peer
+    }
+  }
+}
+
+mutation DeletePeer($input: DeletePeerInput!) {
+  mutation: deletePeer(input: $input) {
+    clientMutationId
+  }
+}
+
+fragment PeerWithoutServer on Peer {
+  id
+  name
+  description
+  publicKey
+  allowedIPs
+  endpoint
+  presharedKey
+  persistentKeepalive
+  createdAt
+  updatedAt
+}
+
+fragment Peer on Peer {
+  ...PeerWithoutServer
+  server {
+    ...ServerWithoutPeers
+  }
+}

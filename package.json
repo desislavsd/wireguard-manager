@@ -1,0 +1,33 @@
+{
+  "name": "wireguard-manager",
+  "author": "Desislav Damyanov",
+  "description": "Wireguard Manager",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "flush": "rm -rf .nuxt"
+  },
+  "devDependencies": {
+    "@pinia/nuxt": "^0.4.7",
+    "@quasar/extras": "^1.16.1",
+    "@total-typescript/ts-reset": "^0.4.2",
+    "@unocss/nuxt": "^0.50.6",
+    "@vee-validate/zod": "^4.8.4",
+    "@vueuse/nuxt": "^9.13.0",
+    "ip-cidr": "^3.1.0",
+    "nuxt": "^3.3.2",
+    "nuxt-graphql-client": "^0.2.27",
+    "nuxt-quasar-ui": "^1.3.1",
+    "pinia-shared-state": "^0.3.0",
+    "qrcode": "^1.5.1",
+    "quasar": "^2.11.9",
+    "sass": "^1.60.0",
+    "zod": "^3.21.4"
+  }
+}

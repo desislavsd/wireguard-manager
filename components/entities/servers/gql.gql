@@ -1,0 +1,140 @@
+query Servers {
+  data: servers {
+    ...Server
+  }
+}
+
+query Server($id: ID!) {
+  data: node(id: $id) {
+    ...Server
+  }
+}
+
+mutation CreateServer($input: CreateServerInput!) {
+  mutation: createServer(input: $input) {
+    clientMutationId
+    data: server {
+      ...Server
+    }
+  }
+}
+
+mutation UpdateServer($input: UpdateServerInput!) {
+  mutation: updateServer(input: $input) {
+    clientMutationId
+    data: server {
+      ...Server
+    }
+  }
+}
+
+mutation DeleteServer($input: DeleteServerInput!) {
+  mutation: deleteServer(input: $input) {
+    clientMutationId
+  }
+}
+
+mutation StartServer($input: StartServerInput!) {
+  startServer(input: $input) {
+    clientMutationId
+    server {
+      ...Server
+    }
+  }
+}
+
+mutation StopServer($input: StopServerInput!) {
+  stopServer(input: $input) {
+    clientMutationId
+    server {
+      ...Server
+    }
+  }
+}
+
+fragment ServerWithoutPeers on Server {
+  id
+  name
+  description
+  enabled
+  running
+  publicKey
+  listenPort
+  firewallMark
+  address
+  dns
+  mtu
+  natEnabled
+  natInterface
+  interfaceStats {
+    rxPackets
+    txPackets
+    rxBytes
+    txBytes
+    rxErrors
+    txErrors
+    rxDropped
+    txDropped
+    multicast
+    collisions
+    rxLengthErrors
+    rxOverErrors
+    rxCrcErrors
+    rxFrameErrors
+    rxFifoErrors
+    rxMissedErrors
+    txAbortedErrors
+    txCarrierErrors
+    txFifoErrors
+    txHeartbeatErrors
+    txWindowErrors
+    rxCompressed
+    txCompressed
+  }
+}
+
+fragment Server on Server {
+  ...ServerWithoutPeers
+  peers {
+    ...PeerWithoutServer
+  }
+  # createUser {
+  #   id
+  #   email
+  #   servers {
+  #     id
+  #     name
+  #     description
+  #     enabled
+  #     running
+  #     publicKey
+  #     listenPort
+  #     firewallMark
+  #     address
+  #     dns
+  #     mtu
+  #     natEnabled
+  #     natInterface
+  #     createdAt
+  #     updatedAt
+  #     deletedAt
+  #   }
+  #   createdAt
+  #   updatedAt
+  # }
+  # updateUser {
+  #   id
+  #   email
+  #   createdAt
+  #   updatedAt
+  # }
+  # deleteUser {
+  #   id
+  #   email
+  #   createdAt
+  #   updatedAt
+  # }
+  createdAt
+  updatedAt
+  deletedAt
+}

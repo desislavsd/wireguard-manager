@@ -1,0 +1,20 @@
+mutation signIn($input: SignInInput!) {
+  signIn(input: $input) {
+    token
+    expiresAt
+    expiresIn
+  }
+}
+
+fragment Viewer on User {
+  id
+  email
+  createdAt
+  updatedAt
+}
+
+query Viewer {
+  viewer {
+    ...Viewer
+  }
+}

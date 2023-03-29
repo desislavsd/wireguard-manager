@@ -1,0 +1,12 @@
+$primary: hsl(var(--c-primary));
+$secondary: hsl(var(--c-secondary));
+$accent: hsl(var(--c-accent));
+
+// used by dark mode
+$dark-page: hsl(var(--c-dark-page));
+$dark: hsl(var(--c-dark));
+
+$positive: hsl(var(--c-positive));
+$negative: hsl(var(--c-negative));
+$info: hsl(var(--c-info));
+$warning: hsl(var(--c-warning));
