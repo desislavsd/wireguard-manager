@@ -6,8 +6,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN yarn install --non-interactive
-RUN yarn build
+RUN npm install -g pnpm
+RUN pnpm install
+RUN npm run build
 
 FROM node:lts
 
