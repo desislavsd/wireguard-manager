@@ -1,0 +1,15 @@
+version: "3"
+services:
+  app:
+    image: ghcr.io/desislavsd/wireguard-manager:latest
+    container_name: wireguard-manager
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GQL_HOST: https://wg-ui.unafraid.dev/query
+    ports:
+      - "3000:3000/tcp"
+    labels:
+      com.centurylinklabs.watchtower.enable: true
