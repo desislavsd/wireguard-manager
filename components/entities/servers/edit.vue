@@ -100,20 +100,6 @@ async function submit() {
         :rules="schema.shape.mtu.$rules"
       />
     </div>
-    <div class="-flex -gap-4">
-      <q-input
-        v-model.trim.number="form.natInterface"
-        type="number"
-        label="NAT Interface"
-        :rules="schema.shape.natInterface.$rules"
-        class="-flex-1"
-      />
-      <q-checkbox
-        v-model="form.natEnabled"
-        label="NAT Enabled"
-        :rules="schema.shape.natEnabled.$rules"
-      />
-    </div>
     <KeypairWidget
       label="Key"
       v-model:public="form.publicKey"

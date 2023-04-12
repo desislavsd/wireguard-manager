@@ -64,8 +64,6 @@ fragment ServerWithoutPeers on Server {
   address
   dns
   mtu
-  natEnabled
-  natInterface
   interfaceStats {
     rxPackets
     txPackets
@@ -113,8 +111,6 @@ fragment Server on Server {
   #     address
   #     dns
   #     mtu
-  #     natEnabled
-  #     natInterface
   #     createdAt
   #     updatedAt
   #     deletedAt

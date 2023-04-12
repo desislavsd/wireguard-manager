@@ -21,8 +21,6 @@ export const schemaAdd = z.object({
   firewallMark: z.number().optional(),
   listenPort: z.number().min(0).max(65535).optional(),
   mtu: z.number().min(1280).max(1500).optional(),
-  natEnabled: z.boolean().optional().default(false),
-  natInterface: z.string().optional().default(''),
   privateKey: z.string().default(''),
   publicKey: z.string().default(''),
 })
@@ -35,8 +33,6 @@ export const schemaUpdate = z.object({
   firewallMark: z.number().optional(),
   listenPort: z.number().min(0).max(65535).optional(),
   mtu: z.number().min(1280).max(1500).optional(),
-  natEnabled: z.boolean().optional().default(false),
-  natInterface: z.string().optional().default(''),
   privateKey: z.string().optional().default(''),
   publicKey: z.string().min(10).default(''),
 })
