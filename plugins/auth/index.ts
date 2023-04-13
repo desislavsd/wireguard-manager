@@ -1,5 +1,6 @@
 import useAuthStore from './store'
 export default defineNuxtPlugin(async (nuxtApp) => {
+  const apollo = useApollo()
   const auth = useAuthStore()
 
   // add global auth guard
@@ -16,6 +17,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.hook('gql:auth:init', ({ token }) => {
     token.value = auth.token
   })
+
+  watch(
+    () => auth.token,
+    (token) =>
+      token ? apollo.onLogin(token, 'default', true) : apollo.onLogout()
+  )
 
   // let the app lifecycle continue only after the
   // user's auth state is resolved

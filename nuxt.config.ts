@@ -23,6 +23,7 @@ export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
     'nuxt-quasar-ui',
+    '@nuxtjs/apollo',
     'nuxt-graphql-client',
     '@unocss/nuxt',
     '@pinia/nuxt',
@@ -35,6 +36,13 @@ export default defineNuxtConfig({
   },
   'graphql-client': {
     functionPrefix: 'gql',
+  },
+  apollo: {
+    clients: {
+      default: {
+        httpEndpoint: process.env.GQL_HOST,
+      },
+    },
   },
   quasar: {
     // string[]: https://quasar.dev/quasar-plugins
@@ -65,7 +73,7 @@ export default defineNuxtConfig({
             .replace(/^-/, '')
             .split('_')
             .filter(Boolean)
-            .map((e) => (!e || /\D/.test(e) ? e : `${e / 4}rem`))
+            .map((e) => (!e || /\D/.test(e) ? e : `${+e / 4}rem`))
 
           return {
             'grid-template-columns': `repeat(auto-${type}, minmax(${v1}, ${v2}) )`,

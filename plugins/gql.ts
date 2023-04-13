@@ -1,5 +1,9 @@
 import { Notify } from 'quasar'
+import { Model } from '@/utils/model'
+
 export default defineNuxtPlugin((nuxt) => {
+  Model.apollo = useApollo()
+
   useGqlError(async (err: any) => {
     const { $auth, $router } = nuxt.vueApp.$nuxt
     const logged = $auth.is('logged')

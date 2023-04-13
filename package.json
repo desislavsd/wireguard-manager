@@ -11,9 +11,16 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "generate:graphql": "graphql-codegen --config gql-codegen.config.ts",
     "flush": "rm -rf .nuxt"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.2.2",
+    "@graphql-codegen/client-preset": "^3.0.0",
+    "@graphql-codegen/named-operations-object": "^2.3.1",
+    "@graphql-codegen/typescript-vue-apollo": "^3.3.7",
+    "@graphql-codegen/typescript-vue-apollo-smart-ops": "^2.3.6",
+    "@nuxtjs/apollo": "5.0.0-alpha.6",
     "@pinia/nuxt": "^0.4.7",
     "@quasar/extras": "^1.16.1",
     "@total-typescript/ts-reset": "^0.4.2",
@@ -29,5 +36,9 @@
     "quasar": "^2.11.9",
     "sass": "^1.60.0",
     "zod": "^3.21.4"
+  },
+  "dependencies": {
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "graphql": "^16.6.0"
   }
 }
