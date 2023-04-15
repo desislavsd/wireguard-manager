@@ -1,5 +1,5 @@
 import useAuthStore from './store'
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin(async (nuxt) => {
   const apollo = useApollo()
   const auth = useAuthStore()
 
@@ -14,15 +14,27 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   })
 
   // hook into graphql client to set the current token
-  nuxtApp.hook('gql:auth:init', ({ token }) => {
-    token.value = auth.token
-  })
-
   watch(
     () => auth.token,
     (token) =>
       token ? apollo.onLogin(token, 'default', true) : apollo.onLogout()
   )
+
+  nuxt.hook('apollo:error', (err) => {
+    const { $router } = nuxt.vueApp.$nuxt
+    // @ts-ignore
+    const loginPage = $router.currentRoute.value.name?.includes?.('login')
+
+    const message = parseGqlErrors(err)
+
+    const isAccessDenied = message.includes('access denied')
+
+    if (loginPage || !isAccessDenied) return
+
+    auth.setLogout()
+
+    auth.promptLogin().catch(() => $router.push(auth.redirect401))
+  })
 
   // let the app lifecycle continue only after the
   // user's auth state is resolved

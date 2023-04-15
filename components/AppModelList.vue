@@ -55,7 +55,12 @@ const config = reactive({
   grid: useLocalStorage(`list-view-${props.model.slug}`, false),
 })
 
-const { data, refresh, pending, error } = props.model.useList()
+const {
+  result: data,
+  refetch: refresh,
+  loading: pending,
+  error,
+} = props.model.useList()
 
 // TODO: should reuse same logic as in ModelTableActions but with
 // more general purpose type for actions. ModelTableAction type

@@ -20,11 +20,16 @@ export default defineNuxtConfig({
       ],
     },
   },
+  plugins: [
+    '~/plugins/dark',
+    '~/plugins/zod',
+    '~/plugins/gql',
+    '~/plugins/auth/index.ts',
+  ],
   modules: [
     '@vueuse/nuxt',
     'nuxt-quasar-ui',
     '@nuxtjs/apollo',
-    'nuxt-graphql-client',
     '@unocss/nuxt',
     '@pinia/nuxt',
   ],
@@ -34,13 +39,10 @@ export default defineNuxtConfig({
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
-  'graphql-client': {
-    functionPrefix: 'gql',
-  },
   apollo: {
     clients: {
       default: {
-        httpEndpoint: process.env.GQL_HOST,
+        httpEndpoint: process.env.GQL_HOST || '/query',
       },
     },
   },

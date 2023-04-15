@@ -1,35 +1,35 @@
 <script lang="tsx" setup>
 import { z } from 'zod'
-import { Users, schemeAdd, schemeUpdate } from './index'
+import { Users, schemaAdd, schemaUpdate } from './index'
 const props = defineProps<{
   item: Users
 }>()
 
 const model = props.item.$model
 
-const scheme = props.item.exists() ? schemeUpdate : schemeAdd
+const schema = props.item.exists() ? schemaUpdate : schemaAdd
 
-const form = ref({ ...scheme.$default(props.item) } as z.infer<typeof scheme>)
+const form = ref({ ...schema.$default(props.item) } as z.infer<typeof schema>)
 
 async function submit() {
   return props.item.exists()
-    ? model.update(props.item, form.value)
-    : model.add(form.value)
+    ? model.update(props.item, form.value as z.infer<typeof schemaUpdate>)
+    : model.add(form.value as z.infer<typeof schemaAdd>)
 }
 </script>
 <template>
   <AppDialog @submit="submit">
     <q-input
       v-model.trim="form.email"
-      type="email"
+      type="text"
       label="E-mail"
       :autofocus="!props.item.exists()"
-      :rules="scheme.shape.email.$rules"
+      :rules="schema.shape.email.$rules"
     />
     <q-input
       v-model.trim="form.password"
       label="Password"
-      :rules="scheme.shape.password.$rules"
+      :rules="schema.shape.password.$rules"
     />
   </AppDialog>
 </template>

@@ -1,5 +1,3 @@
-// import { SignInMutation } from '#gql'
-// import { SignInInput, ViewerQuery } from '#gql'
 import LoginPrompt from '@/components/LoginPrompt.vue'
 import { Dialog } from 'quasar'
 import {
@@ -9,15 +7,13 @@ import {
   ViewerDocument,
   ViewerQuery,
 } from '~/gql'
-
+import { apollo, client as gql } from '@/plugins/gql'
 type User = ViewerQuery['viewer']
 
 let activePrompt: Promise<User> | undefined
 
 const useAuthStore = defineStore('auth', () => {
   const remember = useLocalStorage('remember', false)
-
-  const apollo = useApollo()
 
   const state = reactive({
     user: null as User | null,
@@ -49,14 +45,14 @@ const useAuthStore = defineStore('auth', () => {
 
   async function login(payload: SignInInput) {
     try {
-      state.token = ''
-
-      const res = await apollo.clients!.default.mutate<SignInMutation>({
+      const res = await gql.mutate<SignInMutation>({
         mutation: SignInDocument,
         variables: { input: payload },
       })
 
-      state.token = res.data?.signIn?.token ? res.data.signIn.token : ''
+      let token = res.data?.signIn?.token ? res.data.signIn.token : ''
+
+      apollo.onLogin(token, 'default', true)
 
       return await reload()
     } catch (ex) {
@@ -67,16 +63,15 @@ const useAuthStore = defineStore('auth', () => {
 
   async function logout() {
     setLogout()
+    apollo.onLogout()
   }
 
   async function reload() {
-    const res = await apollo.clients!.default.query<ViewerQuery>({
+    const res = await gql.query<ViewerQuery>({
       query: ViewerDocument,
     })
 
     const user = res.data.viewer
-
-    // const { viewer: user } = await gqlViewer()
 
     setLogin(user)
 
@@ -126,6 +121,7 @@ const useAuthStore = defineStore('auth', () => {
 export default useAuthStore
 
 if (import.meta.hot) {
+  // @ts-ignore
   import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot))
 }
 

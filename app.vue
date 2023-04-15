@@ -1,7 +1,5 @@
 <script>
 import '@total-typescript/ts-reset'
-import { z } from 'zod'
-globalThis.z = z
 </script>
 <template>
   <NuxtLayout>

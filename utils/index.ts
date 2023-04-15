@@ -1,5 +1,7 @@
-import { ServerFragment, PeerFragment } from '#gql'
+import { ServerFragment, PeerFragment } from '@/gql'
 import { Notify } from 'quasar'
+import { DocumentNode } from '@apollo/client'
+import { MutateResult } from '@vue/apollo-composable'
 
 export function cammelCase(s: string) {
   return s
@@ -71,11 +73,18 @@ export async function copyToClipboard(text: string, note = 'Copied') {
 }
 
 export function parseGqlErrors(ex: any): string {
-  if (typeof ex === 'string') return ex
+  const errs = [ex, ex?.gqlErrors, ex?.graphQLErrors, ex?.networkError]
 
-  return (
-    ex?.gqlErrors?.map((e: any) => e.message).join('\n') || ex?.message || ''
-  )
+  const message = [
+    ...new Set(
+      errs
+        .flat()
+        .map((e) => (typeof e == 'string' ? e : e?.message))
+        .filter(Boolean)
+    ),
+  ].join('\n')
+
+  return message
 }
 
 export function objectPick<T extends object, K extends keyof T>(
@@ -127,4 +136,23 @@ export function generateWireguardClientConfig({
       ].join('\n')
     )
     .join('\n')
+}
+
+export function callMutation<TDoc extends DocumentNode>(
+  doc: TDoc,
+  ...args: any[]
+) {
+  let promise: MutateResult<any>
+
+  const scope = effectScope()
+
+  scope.run(() => {
+    const { mutate } = useMutation(doc)
+    promise = mutate(...args)
+  })
+
+  scope.stop()
+
+  // @ts-ignore
+  return promise
 }

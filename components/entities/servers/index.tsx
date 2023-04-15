@@ -1,4 +1,4 @@
-import { ServerFragment } from '#gql'
+import { ServerFragment, StartServerDocument, StopServerDocument } from '@/gql'
 import { z } from 'zod'
 import { QChip } from 'quasar'
 import {
@@ -36,39 +36,6 @@ export const schemaUpdate = z.object({
   privateKey: z.string().optional().default(''),
   publicKey: z.string().min(10).default(''),
 })
-
-async function listFn() {
-  return await gqlServers()
-}
-
-async function findFn(id: Item['id']) {
-  const res = await gqlServer({ id })
-  return res.data
-}
-
-async function updateFn(item: Item, input: z.infer<typeof schemaUpdate>) {
-  input = schemaUpdate.parse(input)
-
-  const res = await gqlUpdateServer({
-    input: {
-      ...input,
-      id: item.id,
-    },
-  })
-  return res.mutation.data
-}
-
-async function addFn(input: z.infer<typeof schemaAdd>) {
-  input = schemaAdd.parse(input)
-
-  const res = await gqlCreateServer({ input })
-  return res.mutation.data
-}
-
-async function delFn(id: Item['id']) {
-  const res = await gqlDeleteServer({ input: { id } })
-  return res.mutation
-}
 
 export interface Servers extends Item {}
 
@@ -117,13 +84,8 @@ export class Servers extends Model {
     },
     { name: 'createdAt', align: 'right' },
   ]
-  static schemeAdd = schemaAdd
-  static schemeUpdate = schemaUpdate
-  static listFn = listFn
-  static findFn = findFn
-  static updateFn = updateFn
-  static addFn = addFn
-  static delFn = delFn
+  static schemaAdd = schemaAdd
+  static schemaUpdate = schemaUpdate
   edit() {
     return super.edit({
       component: EditDialog,
@@ -131,12 +93,10 @@ export class Servers extends Model {
   }
 
   async start() {
-    await gqlStartServer({ input: { id: this.id } })
-    refreshNuxtData(this.$model.slug)
+    return this.$model.mutate(StartServerDocument, { id: this.id })
   }
   async stop() {
-    await gqlStopServer({ input: { id: this.id } })
-    refreshNuxtData(this.$model.slug)
+    return this.$model.mutate(StopServerDocument, { id: this.id })
   }
 
   get tableActions(): BtnModelTableActionsDefinition {

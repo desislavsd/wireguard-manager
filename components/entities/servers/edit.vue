@@ -113,7 +113,7 @@ async function submit() {
       class="-my-4"
       :columns="
         peersModel.columns?.filter((e) =>
-          ['name', 'createdAt'].includes(e.name || e)
+          ['name', 'createdAt'].includes(typeof e == 'string' ? e : e.name)
         )
       "
     />

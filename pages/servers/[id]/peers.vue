@@ -3,8 +3,9 @@ import { Servers } from '@/components/entities/servers'
 export default defineComponent({
   setup() {
     const route = useRoute()
-    const serverId = computed(() => route.params.id)
-    const { data: server, error } = Servers.useFind(unref(serverId))
+    const serverId = computed(() => [route.params.id].flat()[0])
+
+    const { result: server, error } = Servers.useFind(unref(serverId))
 
     const peersModel = computed(() => server.value?.$peersModel)
 

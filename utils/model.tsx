@@ -2,12 +2,15 @@ import { QDialogOptions } from 'quasar'
 import {
   Pretty,
   MinimalColumnDefinition,
-  UnPromise,
-  UnArray,
-  MaybePromise,
   BtnModelTableActionsDefinition,
 } from '~~/types'
+import * as gql from '@/gql'
 import openDialog from './openDialog'
+import { UseQueryReturn } from '@vue/apollo-composable'
+import { client } from '@/plugins/gql'
+import { ZodTypeAny, z } from 'zod/lib'
+import { callMutation } from '@/utils'
+import { Fn } from '~~/types'
 
 type ModelGenericFromChild<child> = child extends Model<infer T> ? T : unknown
 
@@ -85,7 +88,36 @@ export class Model<T = unknown> {
     })
   }
 
+  static schemaAdd?: ZodTypeAny
+  static schemaUpdate?: ZodTypeAny
+
   static slug: string
+
+  static get slugOne() {
+    return this.slug.slice(0, -1)
+  }
+
+  static get operations() {
+    const many = pascalCase(this.slug)
+    const one = many.slice(0, -1)
+    return [
+      (gql.namedOperations.Query as any)[`${many}`],
+      (gql.namedOperations.Query as any)[`${one}`],
+    ]
+  }
+
+  static get docs() {
+    const many = pascalCase(this.slug)
+    const one = many.slice(0, -1)
+
+    return {
+      list: (gql as any)[`${many}Document`],
+      find: (gql as any)[`${one}Document`],
+      add: (gql as any)[`Create${one}Document`],
+      update: (gql as any)[`Update${one}Document`],
+      delete: (gql as any)[`Delete${one}Document`],
+    }
+  }
 
   static title(count: number = Infinity, long = false): string {
     const title = getModelTitle(this.slug, count)
@@ -146,144 +178,108 @@ export class Model<T = unknown> {
     }
   }
 
-  // CRUD functions
-  static listFn<T extends typeof Model>(
+  static useList<T extends typeof Model<unknown>>(
     this: T,
-    ...args: any[]
-  ): MaybePromise<{ data: object[]; [key: string]: any }> {
-    return { data: [] }
-  }
-
-  static async list<
-    T extends typeof Model<unknown>,
-    Fn extends T['listFn'] = T['listFn'],
-    Params extends unknown[] = Parameters<Fn>
-  >(this: T, ...args: Params) {
-    const res = await this.listFn.call(this, ...args)
-    return {
-      ...res,
-      data: res.data.map((e) => this.new(e)) as FnReturnToInstance<T, 'listFn'>,
+    variables?: any,
+    options: { parse: Fn<InstanceType<T>[]> } = {
+      parse: (res) => res?.data || [],
     }
-  }
+  ) {
+    const res = useQuery(this.docs.list, variables)
 
-  /**
-   * useAsyncData wrapper for listFn
-   * data is an array of instances of the model
-   */
-  static useList<
-    T extends typeof Model<unknown>,
-    Fn extends T['listFn'] = T['listFn'],
-    Params extends unknown[] = Parameters<Fn>
-  >(this: T, ...args: Params) {
-    const res = useAsyncData(this.slug, async () =>
-      this.listFn.call(this, ...args)
-    )
+    const result = computed(() => {
+      let data = options.parse(res.result.value)
+
+      return {
+        ...res.result.value,
+        data: data?.map((e: any) => this.new(e)),
+      }
+    })
+
     return {
       ...res,
-      data: computed(() => ({
-        ...res.data.value,
-        data: (res.data.value?.data?.map((e: any) => this.new(e)) ||
-          []) as FnReturnToInstance<T, 'listFn'>,
-      })),
-    }
+      result,
+    } as unknown as UseQueryReturn<{ data: InstanceType<T>[] }, any>
   }
 
-  static findFn(...args: any[]): MaybePromise<object | undefined | null> {
-    return null
-  }
+  static useFind<T extends typeof Model<unknown>>(
+    this: T,
+    id: string | number
+  ) {
+    const res = useQuery(this.docs.find, {
+      id,
+    })
 
-  static async find<
-    T extends typeof Model<unknown>,
-    Fn extends T['findFn'] = T['findFn'],
-    Params extends unknown[] = Parameters<Fn>
-  >(this: T, ...args: Params) {
-    const res = await this.findFn.call(this, ...args)
-    if (!isset(res)) return undefined
-    return this.new(res) as Required<FnReturnToInstance<T, 'findFn'>>
-  }
-
-  static useFind<
-    T extends typeof Model<unknown>,
-    Fn extends T['findFn'] = T['findFn'],
-    Params extends unknown[] = Parameters<Fn>
-  >(this: T, ...args: Params) {
-    const res = useAsyncData(`${this.slug}-detail`, async () =>
-      this.findFn.call(this, ...args)
-    )
     return {
       ...res,
-      data: computed(
-        () =>
-          res.data.value &&
-          (this.new(res.data.value as any) as Required<
-            FnReturnToInstance<T, 'findFn'>
-          >)
+      result: computed(
+        () => res.result.value?.data && this.new(res.result.value.data)
       ),
-    }
-  }
-
-  static updateFn(...args: any[]): MaybePromise<object> {
-    return {}
+    } as UseQueryReturn<InstanceType<T>, any>
   }
 
   static async update<
     T extends typeof Model<unknown>,
-    Fn extends T['updateFn'] = T['updateFn'],
-    Params extends unknown[] = Parameters<Fn>
-  >(this: T, ...args: Params) {
-    const res = await this.updateFn(...args)
-    const slugs = this.refs.map((e) => e.$model.slug).concat(this.slug)
-    refreshNuxtData(slugs)
-    return this.new(res) as FnReturnToInstance<T, 'updateFn'>
-  }
-
-  static addFn(...args: any[]): MaybePromise<object> {
-    return {}
+    Item extends InstanceType<T>,
+    TData extends T['schemaUpdate'] extends ZodTypeAny
+      ? z.infer<T['schemaUpdate']>
+      : object
+  >(this: T, item: Item, input: TData) {
+    return callMutation(this.docs.update, {
+      input: {
+        ...(this.schemaUpdate?.parse(input) ?? input),
+        id: item.$id,
+      },
+    }).then((res) => {
+      this.flush()
+      return this.new(res?.data?.mutation.data)
+    })
   }
 
   static async add<
     T extends typeof Model<unknown>,
-    Fn extends T['addFn'] = T['addFn'],
-    Params extends unknown[] = Parameters<Fn>
-  >(this: T, ...args: Params) {
-    const res = await this.addFn(...args)
-    const slugs = this.refs.map((e) => e.$model.slug).concat(this.slug)
-    refreshNuxtData(slugs)
-    return this.new(res) as Required<FnReturnToInstance<T, 'addFn'>>
-  }
-
-  static delFn(...args: any[]): MaybePromise<object> {
-    return {}
+    TData extends T['schemaAdd'] extends ZodTypeAny
+      ? z.infer<T['schemaAdd']>
+      : object
+  >(this: T, input: TData) {
+    const ids = Object.fromEntries(
+      this.refs.map((e) => [`${e.$model.slugOne}Id`, e.$id])
+    )
+    input = { ...(this.schemaAdd?.parse(input) ?? input), ...ids }
+    return callMutation(this.docs.add, { input }).then((res) => {
+      this.flush()
+      return this.new(res?.data?.mutation.data)
+    })
   }
 
   static async del<
     T extends typeof Model<unknown>,
-    Fn extends T['delFn'] = T['delFn'],
-    Params extends unknown[] = Parameters<Fn>
-  >(this: T, ...args: Params) {
-    const res = await this.delFn(...args)
-    const slugs = this.refs.map((e) => e.$model.slug).concat(this.slug)
-    refreshNuxtData(slugs)
-    if (!isset(res)) return undefined
-    return this.new(res) as Required<FnReturnToInstance<T, 'delFn'>>
+    Item extends InstanceType<T>
+  >(this: T, id: Item['$id']) {
+    return callMutation(this.docs.delete, {
+      input: {
+        id,
+      },
+    }).then((res) => {
+      this.flush()
+      return res
+    })
+  }
+
+  static flush() {
+    // return client.refetchQueries({ include: 'all' })
+    return client.refetchQueries({ include: this.operations })
+  }
+
+  static async mutate(...args: Parameters<typeof callMutation>) {
+    const [doc, input] = args
+    const res = await callMutation(doc, { input })
+    this.flush()
+    return res
   }
 }
 
 export default Model
-
-type crudFnKeys = 'listFn' | 'findFn' | 'updateFn' | 'addFn' | 'delFn'
-
-type FnReturnToInstance<
-  M extends typeof Model,
-  FnName extends crudFnKeys
-> = ExtractFnItem<M[FnName], InstanceType<M>>
-
-type ExtractFnItem<
-  Fn extends (...args: any[]) => any,
-  M = unknown,
-  R = UnPromise<ReturnType<Fn>>,
-  I = Pretty<M & UnArray<R>>
-> = R extends unknown[] ? I[] : I
 
 export function getModelTitle(
   model: string | { slug: string },

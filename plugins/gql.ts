@@ -1,26 +1,28 @@
 import { Notify } from 'quasar'
-import { Model } from '@/utils/model'
+import { ApolloClient } from '@apollo/client'
+
+export let apollo: ReturnType<typeof useApollo>
+export let client: ApolloClient<any>
 
 export default defineNuxtPlugin((nuxt) => {
-  Model.apollo = useApollo()
+  if (import.meta.env.DEV) {
+    // @ts-ignore
+    globalThis.nuxt = nuxt
+  }
+  apollo = useApollo()
 
-  useGqlError(async (err: any) => {
-    const { $auth, $router } = nuxt.vueApp.$nuxt
-    const logged = $auth.is('logged')
+  client = apollo.clients!.default
+
+  nuxt.hook('apollo:error', (err) => {
     const message = parseGqlErrors(err)
-    const isAccessDenied = message.includes('access denied')
 
-    if (!logged && isAccessDenied) return
+    // access denied is handled by the auth plugin
+    if (message.includes('access denied')) return
 
     Notify.create({
       type: 'negative',
       message,
       position: 'top-right',
     })
-
-    if (!isAccessDenied) return
-
-    $auth.setLogout()
-    $auth.promptLogin().catch(() => $router.push($auth.redirect401))
   })
 })

@@ -47,8 +47,6 @@ export type CreateServerInput = {
   listenPort?: InputMaybe<Scalars['Int']>;
   mtu?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
-  natEnabled?: InputMaybe<Scalars['Boolean']>;
-  natInterface?: InputMaybe<Scalars['String']>;
   privateKey?: InputMaybe<Scalars['String']>;
   publicKey?: InputMaybe<Scalars['String']>;
 };
@@ -366,10 +364,6 @@ export type Server = Node & {
   listenPort?: Maybe<Scalars['Int']>;
   mtu: Scalars['Int'];
   name: Scalars['String'];
-  /** @deprecated unimplemented, please don't use */
-  natEnabled: Scalars['Boolean'];
-  /** @deprecated unimplemented, please don't use */
-  natInterface: Scalars['String'];
   peers?: Maybe<Array<Peer>>;
   publicKey: Scalars['String'];
   running: Scalars['Boolean'];
@@ -492,8 +486,6 @@ export type UpdateServerInput = {
   id: Scalars['ID'];
   listenPort?: InputMaybe<Scalars['Int']>;
   mtu?: InputMaybe<Scalars['Int']>;
-  natEnabled?: InputMaybe<Scalars['Boolean']>;
-  natInterface?: InputMaybe<Scalars['String']>;
   privateKey?: InputMaybe<Scalars['String']>;
   publicKey?: InputMaybe<Scalars['String']>;
 };

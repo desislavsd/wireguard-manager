@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import cidr from 'ip-cidr'
-import { ServerFragment, PeerFragment } from '#gql'
+import { ServerFragment, PeerFragment } from '@/gql'
 import { generateWireguardClientConfig } from '@/utils'
 const props = defineProps<{
   server: ServerFragment

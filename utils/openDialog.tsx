@@ -22,5 +22,3 @@ export function openDialog(opts?: QDialogOptions) {
 }
 
 export default openDialog
-
-globalThis.openDialog = openDialog
