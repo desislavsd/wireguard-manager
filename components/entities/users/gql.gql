@@ -1,5 +1,5 @@
-query Users {
-  data: users {
+query Users($query: String) {
+  data: users(query: $query) {
     ...User
   }
 }

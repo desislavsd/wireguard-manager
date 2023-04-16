@@ -43,4 +43,12 @@ import '@total-typescript/ts-reset'
 .q-field--with-bottom:has(.q-field__messages:empty) {
   padding-bottom: 0 !important;
 }
+.q-field.input-small,
+.q-field.input-small .q-field__append,
+input,
+.q-field__control,
+.q-field__control-container {
+  height: 24px !important;
+  font-size: 0.8rem;
+}
 </style>

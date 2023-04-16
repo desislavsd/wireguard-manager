@@ -35,6 +35,14 @@ const props = defineProps<{
   actions?: BtnModelTableActionsDefinition
 }>()
 
+const supportsSearch = computed(() =>
+  props.model.docs.list.definitions.some(
+    (d: any) =>
+      d.kind == 'OperationDefinition' &&
+      d.variableDefinitions.some((e: any) => e.variable.name.value == 'query')
+  )
+)
+
 const columns = computed(() =>
   (props.columns || props.model.columns || []).map(toColumn).concat(
     toColumn({
@@ -55,12 +63,14 @@ const config = reactive({
   grid: useLocalStorage(`list-view-${props.model.slug}`, false),
 })
 
+const variables = reactive({ query: '' })
+
 const {
   result: data,
   refetch: refresh,
   loading: pending,
   error,
-} = props.model.useList()
+} = props.model.useList(variables)
 
 // TODO: should reuse same logic as in ModelTableActions but with
 // more general purpose type for actions. ModelTableAction type
@@ -118,6 +128,17 @@ const tableActions = computed<BtnActionsDefinition>(() => [
         <div class="q-table__title">{{ title }}</div>
       </div>
       <q-space />
+      <q-input
+        v-if="supportsSearch"
+        v-model="variables.query"
+        debounce="250"
+        outlined
+        dense
+        placeholder="Search.."
+        class="input-small -mr-4 -w-[120px]"
+      >
+        <template v-slot:append> <q-icon name="search" /> </template
+      ></q-input>
       <AppActionBtns :actions="tableActions"></AppActionBtns>
     </template>
     <template #body-cell="scope">

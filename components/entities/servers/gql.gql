@@ -1,5 +1,5 @@
-query Servers {
-  data: servers {
+query Servers($query: String) {
+  data: servers(query: $query) {
     ...Server
   }
 }

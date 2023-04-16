@@ -519,7 +519,9 @@ export type User = Node & {
   updatedAt: Scalars['DateTime'];
 };
 
-export type ServersQueryVariables = Exact<{ [key: string]: never; }>;
+export type ServersQueryVariables = Exact<{
+  query?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type ServersQuery = { __typename?: 'Query', data: Array<{ __typename?: 'Server', createdAt: Date, updatedAt: Date, deletedAt?: Date | null, id: string, name: string, description: string, enabled: boolean, running: boolean, publicKey: string, listenPort?: number | null, firewallMark?: number | null, address: string, dns?: Array<string> | null, mtu: number, peers?: Array<{ __typename?: 'Peer', id: string, name: string, description: string, publicKey: string, allowedIPs?: Array<string> | null, endpoint: string, presharedKey: string, persistentKeepalive?: number | null, createdAt: Date, updatedAt: Date }> | null, interfaceStats?: { __typename?: 'ServerInterfaceStats', rxPackets: number, txPackets: number, rxBytes: number, txBytes: number, rxErrors: number, txErrors: number, rxDropped: number, txDropped: number, multicast: number, collisions: number, rxLengthErrors: number, rxOverErrors: number, rxCrcErrors: number, rxFrameErrors: number, rxFifoErrors: number, rxMissedErrors: number, txAbortedErrors: number, txCarrierErrors: number, txFifoErrors: number, txHeartbeatErrors: number, txWindowErrors: number, rxCompressed: number, txCompressed: number } | null }> };
@@ -609,7 +611,9 @@ export type PeerWithoutServerFragment = { __typename?: 'Peer', id: string, name:
 
 export type PeerFragment = { __typename?: 'Peer', id: string, name: string, description: string, publicKey: string, allowedIPs?: Array<string> | null, endpoint: string, presharedKey: string, persistentKeepalive?: number | null, createdAt: Date, updatedAt: Date, server: { __typename?: 'Server', id: string, name: string, description: string, enabled: boolean, running: boolean, publicKey: string, listenPort?: number | null, firewallMark?: number | null, address: string, dns?: Array<string> | null, mtu: number, interfaceStats?: { __typename?: 'ServerInterfaceStats', rxPackets: number, txPackets: number, rxBytes: number, txBytes: number, rxErrors: number, txErrors: number, rxDropped: number, txDropped: number, multicast: number, collisions: number, rxLengthErrors: number, rxOverErrors: number, rxCrcErrors: number, rxFrameErrors: number, rxFifoErrors: number, rxMissedErrors: number, txAbortedErrors: number, txCarrierErrors: number, txFifoErrors: number, txHeartbeatErrors: number, txWindowErrors: number, rxCompressed: number, txCompressed: number } | null } };
 
-export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
+export type UsersQueryVariables = Exact<{
+  query?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type UsersQuery = { __typename?: 'Query', data: Array<{ __typename?: 'User', id: string, email: string, createdAt: Date, updatedAt: Date }> };
@@ -750,8 +754,8 @@ export const ViewerFragmentDoc = gql`
 }
     `;
 export const ServersDocument = gql`
-    query Servers {
-  data: servers {
+    query Servers($query: String) {
+  data: servers(query: $query) {
     ...Server
   }
 }
@@ -764,16 +768,19 @@ export const ServersDocument = gql`
  * When your component renders, `useServersQuery` returns an object from Apollo Client that contains result, loading and error properties
  * you can use to render your UI.
  *
+ * @param variables that will be passed into the query
  * @param options that will be passed into the query, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/query.html#options;
  *
  * @example
- * const { result, loading, error } = useServersQuery();
+ * const { result, loading, error } = useServersQuery({
+ *   query: // value for 'query'
+ * });
  */
-export function useServersQuery(options: VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> = {}) {
-  return VueApolloComposable.useQuery<ServersQuery, ServersQueryVariables>(ServersDocument, {}, options);
+export function useServersQuery(variables: ServersQueryVariables | VueCompositionApi.Ref<ServersQueryVariables> | ReactiveFunction<ServersQueryVariables> = {}, options: VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> = {}) {
+  return VueApolloComposable.useQuery<ServersQuery, ServersQueryVariables>(ServersDocument, variables, options);
 }
-export function useServersLazyQuery(options: VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> = {}) {
-  return VueApolloComposable.useLazyQuery<ServersQuery, ServersQueryVariables>(ServersDocument, {}, options);
+export function useServersLazyQuery(variables: ServersQueryVariables | VueCompositionApi.Ref<ServersQueryVariables> | ReactiveFunction<ServersQueryVariables> = {}, options: VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<ServersQuery, ServersQueryVariables>> = {}) {
+  return VueApolloComposable.useLazyQuery<ServersQuery, ServersQueryVariables>(ServersDocument, variables, options);
 }
 export type ServersQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<ServersQuery, ServersQueryVariables>;
 export const ServerDocument = gql`
@@ -1123,8 +1130,8 @@ export function useDeletePeerMutation(options: VueApolloComposable.UseMutationOp
 }
 export type DeletePeerMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<DeletePeerMutation, DeletePeerMutationVariables>;
 export const UsersDocument = gql`
-    query Users {
-  data: users {
+    query Users($query: String) {
+  data: users(query: $query) {
     ...User
   }
 }
@@ -1137,16 +1144,19 @@ export const UsersDocument = gql`
  * When your component renders, `useUsersQuery` returns an object from Apollo Client that contains result, loading and error properties
  * you can use to render your UI.
  *
+ * @param variables that will be passed into the query
  * @param options that will be passed into the query, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/query.html#options;
  *
  * @example
- * const { result, loading, error } = useUsersQuery();
+ * const { result, loading, error } = useUsersQuery({
+ *   query: // value for 'query'
+ * });
  */
-export function useUsersQuery(options: VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> = {}) {
-  return VueApolloComposable.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, {}, options);
+export function useUsersQuery(variables: UsersQueryVariables | VueCompositionApi.Ref<UsersQueryVariables> | ReactiveFunction<UsersQueryVariables> = {}, options: VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> = {}) {
+  return VueApolloComposable.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, variables, options);
 }
-export function useUsersLazyQuery(options: VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> = {}) {
-  return VueApolloComposable.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, {}, options);
+export function useUsersLazyQuery(variables: UsersQueryVariables | VueCompositionApi.Ref<UsersQueryVariables> | ReactiveFunction<UsersQueryVariables> = {}, options: VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<UsersQuery, UsersQueryVariables>> = {}) {
+  return VueApolloComposable.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, variables, options);
 }
 export type UsersQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<UsersQuery, UsersQueryVariables>;
 export const UserDocument = gql`
