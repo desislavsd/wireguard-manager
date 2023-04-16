@@ -132,7 +132,7 @@ export default defineComponent({
       <div class="-flex -gap-4 -items-center">
         {groups.value.map((actions) => {
           const btns = actions.map(([name, opts, subActions]) => (
-            <q-btn
+            <app-btn
               {...{
                 size: 'sm',
                 outline: true,
@@ -143,7 +143,7 @@ export default defineComponent({
             >
               {opts.label || ''}
               <SubActionMenu actions={subActions} scope={props.scope} />
-            </q-btn>
+            </app-btn>
           ))
           // single buttons are not wrapped in a group
           if (btns.length === 1) return btns[0]
