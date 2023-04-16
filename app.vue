@@ -45,9 +45,9 @@ import '@total-typescript/ts-reset'
 }
 .q-field.input-small,
 .q-field.input-small .q-field__append,
-input,
-.q-field__control,
-.q-field__control-container {
+.q-field.input-small input,
+.q-field.input-small .q-field__control,
+.q-field.input-small .q-field__control-container {
   height: 24px !important;
   font-size: 0.8rem;
 }
