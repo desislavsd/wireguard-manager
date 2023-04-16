@@ -75,13 +75,13 @@ const privateKey = ref('')
       class="-mt-3"
       label="Keys"
     ></KeypairWidget>
-    <q-btn
+    <app-btn
       color="secondary"
       class="-w-full -my-3"
       @click="
         item.clone().assign(form).assign({ privateKey }).promptConfigure()
       "
-      >Get client config</q-btn
+      >Get client config</app-btn
     >
   </AppDialog>
 </template>

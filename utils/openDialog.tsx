@@ -18,7 +18,12 @@ export function openDialog(opts?: QDialogOptions) {
     },
   }
 
-  return new Promise((rs) => Dialog.create(opts || {}).onOk(rs))
+  return new Promise((rs, rj) =>
+    Dialog.create(opts || {})
+      .onOk(rs)
+      .onCancel(rj)
+      .onDismiss(rj)
+  )
 }
 
 export default openDialog

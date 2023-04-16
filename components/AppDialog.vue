@@ -18,7 +18,7 @@ import {
 import AppForm from '~~/components/AppForm.vue'
 import AppErrorBanner from '~~/components/AppErrorBanner.vue'
 import { Pretty, Model } from '~~/types'
-import { del } from 'nuxt/dist/app/compat/capi'
+import AppBtn from '@/components/AppBtn.vue'
 
 type ActionProp =
   | QBtnProps['label']
@@ -110,7 +110,7 @@ export default defineComponent({
             ]}
           >
             {delItem.value && (
-              <QBtn
+              <AppBtn
                 color="negative"
                 size="xs"
                 onClick={delItem.value}
@@ -120,12 +120,12 @@ export default defineComponent({
             )}
 
             <QSpace />
-            <QBtn flat outline onClick={dialog.onDialogCancel}>
+            <AppBtn flat outline onClick={dialog.onDialogCancel}>
               cancel
-            </QBtn>
+            </AppBtn>
             {slots.secondaryActions?.({ dialog })}
             {slots.action?.({ dialog }) ||
-              actions.value.map((e) => <QBtn {...e} />)}
+              actions.value.map((e) => <AppBtn {...e} />)}
           </QCardActions>
         </>
       )

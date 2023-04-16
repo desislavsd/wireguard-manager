@@ -108,7 +108,6 @@ const tableActions = computed<BtnActionsDefinition>(() => [
 </script>
 
 <template>
-  <!-- <q-card> -->
   <q-table
     v-bind="{ ...$attrs as any, columns, title, ...config }"
     :rows="data?.data || []"
@@ -120,14 +119,10 @@ const tableActions = computed<BtnActionsDefinition>(() => [
       </div>
       <q-space />
       <AppActionBtns :actions="tableActions"></AppActionBtns>
-      <!-- <div class="-flex -gap-4 items-center">
-          <q-btn v-for="btn in tableActions" v-bind="btn"></q-btn>
-        </div> -->
     </template>
     <template #body-cell="scope">
       <q-td :props="scope"> <VNode :node="scope.value" /> </q-td>
     </template>
   </q-table>
-  <!-- </q-card> -->
 </template>
 <style></style>
