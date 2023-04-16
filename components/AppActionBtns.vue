@@ -2,6 +2,7 @@
 import { ClosePopup } from 'quasar'
 import { AppBtnAction, AppBtnSubAction, BtnActionsDefinition } from '@/types'
 import { objectPick } from '@vueuse/core'
+import AppBtn from '@/components/AppBtn.vue'
 
 export const SubActionMenu = defineComponent({
   name: 'SubActionMenu',
@@ -132,7 +133,7 @@ export default defineComponent({
       <div class="-flex -gap-4 -items-center">
         {groups.value.map((actions) => {
           const btns = actions.map(([name, opts, subActions]) => (
-            <app-btn
+            <AppBtn
               {...{
                 size: 'sm',
                 outline: true,
@@ -143,7 +144,7 @@ export default defineComponent({
             >
               {opts.label || ''}
               <SubActionMenu actions={subActions} scope={props.scope} />
-            </app-btn>
+            </AppBtn>
           ))
           // single buttons are not wrapped in a group
           if (btns.length === 1) return btns[0]
