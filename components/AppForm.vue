@@ -6,6 +6,8 @@ export function useFormContext() {
 }
 </script>
 <script lang="tsx" setup>
+import { ApolloError } from '@apollo/client'
+
 const props = defineProps<{
   onSubmit?: (ev: SubmitEvent | Event) => any
 }>()
@@ -20,7 +22,8 @@ async function exec(ev: SubmitEvent | Event): Promise<unknown> {
   try {
     return await props.onSubmit?.call(null, ev)
   } catch (ex: any) {
-    console.error(ex)
+    // mark errors as handled so they don't get shown in toast
+    ex.graphQLErrors?.forEach?.((e: any) => (e.HANDLED = true))
     error.value = ex
   }
 }

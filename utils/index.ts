@@ -72,19 +72,24 @@ export async function copyToClipboard(text: string, note = 'Copied') {
   return res
 }
 
-export function parseGqlErrors(ex: any): string {
+export function parseGqlErrors(
+  ex: any,
+  { skipHandled = false }: { skipHandled?: boolean } = {}
+): string {
   const errs = [ex, ex?.gqlErrors, ex?.graphQLErrors, ex?.networkError]
 
   const message = [
     ...new Set(
       errs
         .flat()
-        .map((e) => (typeof e == 'string' ? e : e?.message))
+        .map((e) =>
+          typeof e == 'string' ? e : (!skipHandled || !e?.HANDLED) && e?.message
+        )
         .filter(Boolean)
     ),
   ].join('\n')
 
-  return message
+  return message.trim()
 }
 
 export function objectPick<T extends object, K extends keyof T>(

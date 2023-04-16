@@ -14,15 +14,20 @@ export default defineNuxtPlugin((nuxt) => {
   client = apollo.clients!.default
 
   nuxt.hook('apollo:error', (err) => {
-    const message = parseGqlErrors(err)
+    // this global error handler runs before the error is handled by the component
+    // so we wait to see if errors will potentially be marked as handled
+    // only non handled errors will be shown
+    setTimeout(() => {
+      const message = parseGqlErrors(err, { skipHandled: true })
 
-    // access denied is handled by the auth plugin
-    if (message.includes('access denied')) return
+      // access denied is handled by the auth plugin
+      if (!message || message.includes('access denied')) return
 
-    Notify.create({
-      type: 'negative',
-      message,
-      position: 'top-right',
+      Notify.create({
+        type: 'negative',
+        message,
+        position: 'top-right',
+      })
     })
   })
 })
