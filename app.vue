@@ -6,6 +6,19 @@ import '@total-typescript/ts-reset'
     <NuxtPage />
     <q-ajax-bar ref="bar" position="top" color="accent" size="5px" />
   </NuxtLayout>
+  <q-btn
+    icon="palette"
+    class="-fixed -right-0 -bottom-0 -z-50 -m-2"
+    rounded
+    padding="3px"
+    size="10px"
+    unelevated
+    color="dark"
+  >
+    <q-menu :offset="[-0, 10]" anchor="top right" self="bottom right">
+      <AppThemeEditor></AppThemeEditor>
+    </q-menu>
+  </q-btn>
 </template>
 <style>
 :root {
