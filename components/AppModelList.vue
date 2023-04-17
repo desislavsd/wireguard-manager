@@ -17,6 +17,7 @@ function toColumn(e: MinimalColumnDefinition) {
   return {
     align: 'left',
     format: getFormatter(name),
+    sortable: true,
     ...definition,
     field,
     label,
@@ -49,6 +50,7 @@ const columns = computed(() =>
       name: 'actions',
       classes: '-w-0',
       align: 'center',
+      sortable: false,
       format(val, row: Model) {
         const actions = row.tableActions
         return <AppActionBtns scope={row} actions={actions} />

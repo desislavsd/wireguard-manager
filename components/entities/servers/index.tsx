@@ -67,7 +67,7 @@ export class Servers extends Model {
         const max = 3
         const more = Math.max((item.peers?.length || 0) - max, 0)
         return (
-          <div class="-flex -flex-wrap -gap-2">
+          <div class="-flex -flex-wrap">
             {item.peers?.slice(0, max)?.map((e) => (
               <QChip outline color="secondary" size="sm">
                 {e.name}
