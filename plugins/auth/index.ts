@@ -1,6 +1,6 @@
 import useAuthStore from './store'
+
 export default defineNuxtPlugin(async (nuxt) => {
-  const apollo = useApollo()
   const auth = useAuthStore()
 
   // add global auth guard
@@ -12,13 +12,6 @@ export default defineNuxtPlugin(async (nuxt) => {
 
     if (!logged && !toLogin) return auth.redirect401
   })
-
-  // hook into graphql client to set the current token
-  watch(
-    () => auth.token,
-    (token) =>
-      token ? apollo.onLogin(token, 'default', true) : apollo.onLogout()
-  )
 
   nuxt.hook('apollo:error', (err) => {
     const { $router } = nuxt.vueApp.$nuxt

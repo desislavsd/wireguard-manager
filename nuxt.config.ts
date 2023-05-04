@@ -2,6 +2,11 @@ import { readFileSync } from 'fs'
 import path from 'path'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      gqlHost: process.env.GQL_HOST || '',
+    },
+  },
   app: {
     head: {
       title: 'Wireguard Manager',
@@ -21,11 +26,12 @@ export default defineNuxtConfig({
     },
   },
   plugins: [
+    '~/plugins/dev.ts',
     '~/plugins/dark',
     '~/plugins/zod',
     '~/plugins/gql',
     '~/plugins/auth/index.ts',
-  ],
+  ].filter(Boolean),
   modules: [
     '@vueuse/nuxt',
     'nuxt-quasar-ui',
@@ -42,7 +48,9 @@ export default defineNuxtConfig({
   apollo: {
     clients: {
       default: {
-        httpEndpoint: process.env.GQL_HOST || '/query',
+        // this is not actually used, but required by the plugin
+        // use the runtime config instead
+        httpEndpoint: '',
       },
     },
   },
