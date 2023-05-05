@@ -1,4 +1,10 @@
-import { ServerFragment, StartServerDocument, StopServerDocument } from '@/gql'
+import {
+  OnServerChangedSubscription,
+  ServerFragment,
+  StartServerDocument,
+  StopServerDocument,
+  useOnServerChangedSubscription,
+} from '@/gql'
 import { z } from 'zod'
 import { QChip } from 'quasar'
 import {
@@ -9,6 +15,8 @@ import { Model } from '~~/utils/model'
 import { Peers } from './peers'
 import { NuxtLink } from '#components'
 import EditDialog from './edit.vue'
+import ServersStatChart from './ServersStatChart.vue'
+import { openDialog } from '@/utils/openDialog'
 
 export type Item = ServerFragment
 
@@ -112,6 +120,14 @@ export class Servers extends Model {
           onClick: () => (item.running ? item.stop() : item.start()),
         },
       ],
+      [
+        'heartbeat',
+        {
+          icon: 'insert_chart',
+          color: 'info',
+          onClick: () => item.viewStats(),
+        },
+      ],
       ...defaults,
     ] as BtnModelTableActionsDefinition
   }
@@ -119,6 +135,30 @@ export class Servers extends Model {
   get $peersModel() {
     return Peers.of(this)
   }
+
+  async viewStats() {
+    return openDialog({
+      fullWidth: true,
+      componentProps: {
+        cardClasses: '-w-full',
+        title: `Server stats`,
+        content: <ServersStatChart serverId={this.$id} />,
+      },
+    })
+  }
 }
 
 export default Servers
+
+export function useServerStatsList() {
+  const data = ref<{ item: OnServerChangedSubscription; time: Date }[]>([])
+
+  const res = useOnServerChangedSubscription()
+
+  watchEffect(() => {
+    res.result.value &&
+      data.value.push({ item: res.result.value, time: new Date() })
+  })
+
+  return { ...res, data }
+}

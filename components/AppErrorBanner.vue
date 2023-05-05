@@ -33,7 +33,6 @@ export default defineComponent({
 </script>
 <template>
   <transition
-    class=""
     appear
     enter-active-class="-animate-bounce-in -animate-duration-300"
   >

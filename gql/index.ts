@@ -99,6 +99,7 @@ export type DeleteUserInput = {
 export type DeleteUserPayload = {
   __typename?: 'DeleteUserPayload';
   clientMutationId?: Maybe<Scalars['String']>;
+  user?: Maybe<User>;
 };
 
 export type ForeignInterface = {
@@ -259,6 +260,8 @@ export type Node = {
   id: Scalars['ID'];
 };
 
+export type NodeChangedEvent = PeerChangedEvent | ServerChangedEvent | UserChangedEvent;
+
 export type Peer = Node & {
   __typename?: 'Peer';
   allowedIPs?: Maybe<Array<Scalars['String']>>;
@@ -278,6 +281,18 @@ export type Peer = Node & {
   stats?: Maybe<PeerStats>;
   updateUser?: Maybe<User>;
   updatedAt: Scalars['DateTime'];
+};
+
+export enum PeerAction {
+  Created = 'CREATED',
+  Deleted = 'DELETED',
+  Updated = 'UPDATED'
+}
+
+export type PeerChangedEvent = {
+  __typename?: 'PeerChangedEvent';
+  action: PeerAction;
+  node: Peer;
 };
 
 export type PeerHook = {
@@ -371,6 +386,21 @@ export type Server = Node & {
   updatedAt: Scalars['DateTime'];
 };
 
+export enum ServerAction {
+  Created = 'CREATED',
+  Deleted = 'DELETED',
+  InterfaceStatsUpdated = 'INTERFACE_STATS_UPDATED',
+  Started = 'STARTED',
+  Stopped = 'STOPPED',
+  Updated = 'UPDATED'
+}
+
+export type ServerChangedEvent = {
+  __typename?: 'ServerChangedEvent';
+  action: ServerAction;
+  node: Server;
+};
+
 export type ServerHook = {
   __typename?: 'ServerHook';
   command: Scalars['String'];
@@ -456,6 +486,14 @@ export type StopServerPayload = {
   server?: Maybe<Server>;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  nodeChanged: NodeChangedEvent;
+  peerChanged: PeerChangedEvent;
+  serverChanged: ServerChangedEvent;
+  userChanged: UserChangedEvent;
+};
+
 export type UpdatePeerInput = {
   allowedIPs?: InputMaybe<Array<Scalars['String']>>;
   clientMutationId?: InputMaybe<Scalars['String']>;
@@ -519,6 +557,18 @@ export type User = Node & {
   updatedAt: Scalars['DateTime'];
 };
 
+export enum UserAction {
+  Created = 'CREATED',
+  Deleted = 'DELETED',
+  Updated = 'UPDATED'
+}
+
+export type UserChangedEvent = {
+  __typename?: 'UserChangedEvent';
+  action: UserAction;
+  node: User;
+};
+
 export type ServersQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
 }>;
@@ -571,6 +621,11 @@ export type StopServerMutation = { __typename?: 'Mutation', stopServer: { __type
 export type ServerWithoutPeersFragment = { __typename?: 'Server', id: string, name: string, description: string, enabled: boolean, running: boolean, publicKey: string, listenPort?: number | null, firewallMark?: number | null, address: string, dns?: Array<string> | null, mtu: number, interfaceStats?: { __typename?: 'ServerInterfaceStats', rxPackets: number, txPackets: number, rxBytes: number, txBytes: number, rxErrors: number, txErrors: number, rxDropped: number, txDropped: number, multicast: number, collisions: number, rxLengthErrors: number, rxOverErrors: number, rxCrcErrors: number, rxFrameErrors: number, rxFifoErrors: number, rxMissedErrors: number, txAbortedErrors: number, txCarrierErrors: number, txFifoErrors: number, txHeartbeatErrors: number, txWindowErrors: number, rxCompressed: number, txCompressed: number } | null };
 
 export type ServerFragment = { __typename?: 'Server', createdAt: Date, updatedAt: Date, deletedAt?: Date | null, id: string, name: string, description: string, enabled: boolean, running: boolean, publicKey: string, listenPort?: number | null, firewallMark?: number | null, address: string, dns?: Array<string> | null, mtu: number, peers?: Array<{ __typename?: 'Peer', id: string, name: string, description: string, publicKey: string, allowedIPs?: Array<string> | null, endpoint: string, presharedKey: string, persistentKeepalive?: number | null, createdAt: Date, updatedAt: Date }> | null, interfaceStats?: { __typename?: 'ServerInterfaceStats', rxPackets: number, txPackets: number, rxBytes: number, txBytes: number, rxErrors: number, txErrors: number, rxDropped: number, txDropped: number, multicast: number, collisions: number, rxLengthErrors: number, rxOverErrors: number, rxCrcErrors: number, rxFrameErrors: number, rxFifoErrors: number, rxMissedErrors: number, txAbortedErrors: number, txCarrierErrors: number, txFifoErrors: number, txHeartbeatErrors: number, txWindowErrors: number, rxCompressed: number, txCompressed: number } | null };
+
+export type OnServerChangedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OnServerChangedSubscription = { __typename?: 'Subscription', data: { __typename?: 'ServerChangedEvent', action: ServerAction, node: { __typename?: 'Server', id: string, name: string, interfaceStats?: { __typename?: 'ServerInterfaceStats', rxPackets: number, txPackets: number, rxBytes: number, txBytes: number } | null } } };
 
 export type PeersQueryVariables = Exact<{
   serverId: Scalars['ID'];
@@ -970,6 +1025,40 @@ export function useStopServerMutation(options: VueApolloComposable.UseMutationOp
   return VueApolloComposable.useMutation<StopServerMutation, StopServerMutationVariables>(StopServerDocument, options);
 }
 export type StopServerMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<StopServerMutation, StopServerMutationVariables>;
+export const OnServerChangedDocument = gql`
+    subscription onServerChanged {
+  data: serverChanged {
+    action
+    node {
+      id
+      name
+      interfaceStats {
+        rxPackets
+        txPackets
+        rxBytes
+        txBytes
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useOnServerChangedSubscription__
+ *
+ * To run a query within a Vue component, call `useOnServerChangedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOnServerChangedSubscription` returns an object from Apollo Client that contains result, loading and error properties
+ * you can use to render your UI.
+ *
+ * @param options that will be passed into the subscription, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/subscription.html#options;
+ *
+ * @example
+ * const { result, loading, error } = useOnServerChangedSubscription();
+ */
+export function useOnServerChangedSubscription(options: VueApolloComposable.UseSubscriptionOptions<OnServerChangedSubscription, OnServerChangedSubscriptionVariables> | VueCompositionApi.Ref<VueApolloComposable.UseSubscriptionOptions<OnServerChangedSubscription, OnServerChangedSubscriptionVariables>> | ReactiveFunction<VueApolloComposable.UseSubscriptionOptions<OnServerChangedSubscription, OnServerChangedSubscriptionVariables>> = {}) {
+  return VueApolloComposable.useSubscription<OnServerChangedSubscription, OnServerChangedSubscriptionVariables>(OnServerChangedDocument, {}, options);
+}
+export type OnServerChangedSubscriptionCompositionFunctionResult = VueApolloComposable.UseSubscriptionReturn<OnServerChangedSubscription, OnServerChangedSubscriptionVariables>;
 export const PeersDocument = gql`
     query Peers($serverId: ID!) {
   data: node(id: $serverId) {
@@ -1363,6 +1452,9 @@ export const namedOperations = {
     UpdateUser: 'UpdateUser',
     DeleteUser: 'DeleteUser',
     signIn: 'signIn'
+  },
+  Subscription: {
+    onServerChanged: 'onServerChanged'
   },
   Fragment: {
     ServerWithoutPeers: 'ServerWithoutPeers',

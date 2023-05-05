@@ -35,5 +35,9 @@
     "quasar": "^2.11.9",
     "sass": "^1.60.0",
     "zod": "^3.21.4"
+  },
+  "dependencies": {
+    "chart.js": "^4.3.0",
+    "vue-chartjs": "^5.2.0"
   }
 }

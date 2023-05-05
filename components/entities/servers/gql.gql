@@ -134,3 +134,38 @@ fragment Server on Server {
   updatedAt
   deletedAt
 }
+
+subscription onServerChanged {
+  data: serverChanged {
+    action
+    node {
+      id
+      name
+      interfaceStats {
+        rxPackets
+        txPackets
+        rxBytes
+        txBytes
+        # rxErrors
+        # txErrors
+        # rxDropped
+        # txDropped
+        # multicast
+        # collisions
+        # rxLengthErrors
+        # rxOverErrors
+        # rxCrcErrors
+        # rxFrameErrors
+        # rxFifoErrors
+        # rxMissedErrors
+        # txAbortedErrors
+        # txCarrierErrors
+        # txFifoErrors
+        # txHeartbeatErrors
+        # txWindowErrors
+        # rxCompressed
+        # txCompressed
+      }
+    }
+  }
+}

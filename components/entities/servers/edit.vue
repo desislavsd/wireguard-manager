@@ -117,6 +117,13 @@ async function submit() {
         )
       "
     />
+    <template v-if="item.$id" #secondaryActions>
+      <AppBtn
+        @click="item.viewStats()"
+        icon="insert_chart"
+        color="info"
+      ></AppBtn>
+    </template>
   </AppDialog>
 </template>
 <style></style>

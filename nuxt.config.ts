@@ -31,6 +31,7 @@ export default defineNuxtConfig({
     '~/plugins/zod',
     '~/plugins/gql',
     '~/plugins/auth/index.ts',
+    '~/plugins/charts.ts',
   ].filter(Boolean),
   modules: [
     '@vueuse/nuxt',
@@ -50,7 +51,7 @@ export default defineNuxtConfig({
       default: {
         // this is not actually used, but required by the plugin
         // use the runtime config instead
-        httpEndpoint: '',
+        httpEndpoint: 'IGNORE_THIS',
       },
     },
   },
