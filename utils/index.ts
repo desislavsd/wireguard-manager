@@ -103,17 +103,20 @@ export function objectPick<T extends object, K extends keyof T>(
   )
 }
 
-export function generateWireguardClientConfig({
-  server,
-  peer,
-  address,
-  allowedIPs,
-}: {
-  address: string
-  allowedIPs: string[]
-  server: ServerFragment
-  peer: PeerFragment & { privateKey?: string }
-}) {
+export function generateWireguardClientConfig(
+  {
+    server,
+    peer,
+    address,
+    allowedIPs,
+  }: {
+    address: string
+    allowedIPs: string[]
+    server: ServerFragment
+    peer: PeerFragment & { privateKey?: string }
+  },
+  options: { keepEmpty?: boolean | string[] } = {}
+) {
   const config = {
     Interface: {
       PrivateKey: peer.privateKey,
@@ -134,7 +137,13 @@ export function generateWireguardClientConfig({
       [
         `[${name}]`,
         Object.entries(config)
-          .filter(([_, value]) => isset(value))
+          .filter(
+            ([_, value]) =>
+              options.keepEmpty === true ||
+              (Array.isArray(options.keepEmpty) &&
+                options.keepEmpty.includes(_)) ||
+              isset(value)
+          )
           .map(([key, value]) => `${key} = ${value}`)
           .join('\n'),
         '',

@@ -82,8 +82,8 @@ export class Peers extends Model {
   }
 
   promptConfigure() {
-    if (!this.privateKey)
-      return void Notify.create('Generate a private key first')
+    // if (!this.privateKey)
+    //   return void Notify.create('Generate a private key first')
     return openDialog({
       component: ConfigureWireguardClient,
       componentProps: {

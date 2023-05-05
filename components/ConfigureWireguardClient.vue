@@ -29,11 +29,14 @@ function getPeerAddress(
 }
 
 const config = ref(
-  generateWireguardClientConfig({
-    ...props,
-    address: getPeerAddress() || '',
-    allowedIPs: [] as string[],
-  })
+  generateWireguardClientConfig(
+    {
+      ...props,
+      address: getPeerAddress() || '',
+      allowedIPs: [] as string[],
+    },
+    { keepEmpty: ['PrivateKey'] }
+  )
 )
 
 const downloadConfigLink = (

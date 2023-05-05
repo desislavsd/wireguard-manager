@@ -180,11 +180,11 @@ export default {
     return keyToBase64(generatePresharedKey())
   },
   generateKeypair: function () {
-    var privateKey = generatePrivateKey()
-    var publicKey = generatePublicKey(privateKey)
+    var privateKey = keyToBase64(generatePrivateKey())
+    var publicKey = keyToBase64(generatePublicKey(privateKey))
     return {
-      publicKey: keyToBase64(publicKey),
-      privateKey: keyToBase64(privateKey),
+      publicKey,
+      privateKey,
     }
   },
 }

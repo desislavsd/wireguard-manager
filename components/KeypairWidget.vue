@@ -1,6 +1,5 @@
 <script lang="tsx">
 import { PropType } from 'vue'
-import { Notify } from 'quasar'
 import wireguard from '~~/utils/wireguard'
 import { z } from 'zod'
 
@@ -102,7 +101,7 @@ export default defineComponent({
       v-model.trim="form.publicKey"
       label="Public"
       :rules="schema?.publicKey?.$rules"
-      readonly
+      @update:model-value="() => (form.privateKey = '')"
     >
       <template v-slot:append>
         <q-btn
