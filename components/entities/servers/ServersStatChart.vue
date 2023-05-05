@@ -3,7 +3,7 @@ const numberFormatter = Intl.NumberFormat('en-US', {
   notation: 'compact',
   maximumFractionDigits: 3,
 })
-import { Chart, ChartProps } from 'vue-chartjs'
+import { Line, ChartProps } from 'vue-chartjs'
 import { default as model, useServerStatsList } from './index'
 
 const props = defineProps<{
@@ -112,6 +112,6 @@ const options = computed(() => {
 })
 </script>
 <template>
-  <Chart v-bind="options" />
+  <Line v-bind="(options as any)" />
 </template>
 <style></style>

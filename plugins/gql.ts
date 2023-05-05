@@ -66,7 +66,7 @@ export default defineNuxtPlugin((nuxt) => {
     )
   }
 
-  async function globalErrorHandler(err) {
+  async function globalErrorHandler(err: any) {
     // this global error handler runs before the error is handled by the component
     // so we wait to see if errors will potentially be marked as handled
     // only non handled errors will be shown
