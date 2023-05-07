@@ -36,6 +36,7 @@ async function removeTheme() {
   $theme.theme = ''
   $theme.themes = objectPick($theme.themes, (k, v) => k != current)
 }
+const emit = defineEmits(['change'])
 </script>
 <template>
   <q-card>
@@ -50,6 +51,7 @@ async function removeTheme() {
           class="-flex-1"
           dense
           @new-value="createTheme"
+          @update:model-value="emit('change')"
         ></q-select>
         <app-btn
           icon="delete"

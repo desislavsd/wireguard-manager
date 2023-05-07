@@ -1,5 +1,12 @@
-<script>
+<script lang="ts" setup>
 import '@total-typescript/ts-reset'
+const themeDD = templateRef('theme-dd')
+async function onThemeChange() {
+  await nextTick()
+  await nextTick()
+  // @ts-ignore
+  themeDD.value.updatePosition()
+}
 </script>
 <template>
   <NuxtLayout>
@@ -15,8 +22,13 @@ import '@total-typescript/ts-reset'
     unelevated
     color="dark"
   >
-    <q-menu :offset="[-0, 10]" anchor="top right" self="bottom right">
-      <AppThemeEditor></AppThemeEditor>
+    <q-menu
+      ref="theme-dd"
+      :offset="[-0, 10]"
+      anchor="top right"
+      self="bottom right"
+    >
+      <AppThemeEditor @change="onThemeChange"></AppThemeEditor>
     </q-menu>
   </q-btn>
 </template>
