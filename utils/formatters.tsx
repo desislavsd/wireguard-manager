@@ -1,4 +1,4 @@
-import { QIcon } from 'quasar'
+import { QIcon, QBtn } from 'quasar'
 type Tester = RegExp | ((key: string) => boolean)
 type Formatter = Function
 type FormattersRecord = Record<string, [Tester, Formatter]>
@@ -23,6 +23,23 @@ const formatters: FormattersRecord = {
       ),
   ],
   date: [/At$/, (d: string) => dateFormatter.format(new Date(d))],
+  sshKey: [
+    /(?:public|private)Key/,
+    (v: string) =>
+      v && (
+        <QBtn
+          color="secondary"
+          dense
+          flat
+          size="xs"
+          // @ts-ignore
+          class="-overflow-hidden -text-ellipsis -min-w-0 -gap-2 -pl-0"
+          onClick={() => copyToClipboard(v)}
+        >
+          {v}
+        </QBtn>
+      ),
+  ],
 }
 
 export function getFormatter(key: string) {

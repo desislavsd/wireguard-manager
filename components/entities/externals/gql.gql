@@ -1,0 +1,38 @@
+query ForeignServers {
+  data: foreignServers {
+    ...ForeignServer
+  }
+}
+
+mutation ImportForeignServer($input: ImportForeignServerInput!) {
+  mutation: importForeignServer(input: $input) {
+    clientMutationId
+  }
+}
+
+fragment ForeignServer on ForeignServer {
+  foreignInterface {
+    name
+    addresses
+    mtu
+  }
+  name
+  type
+  publicKey
+  listenPort
+  firewallMark
+  peers {
+    ...ForeignPeer
+  }
+}
+
+fragment ForeignPeer on ForeignPeer {
+  publicKey
+  endpoint
+  allowedIps
+  persistentKeepAliveInterval
+  lastHandshakeTime
+  receiveBytes
+  transmitBytes
+  protocolVersion
+}

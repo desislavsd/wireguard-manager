@@ -1,6 +1,5 @@
 <script lang="tsx">
-import { QBtnProps } from 'quasar'
-import { getFormatter } from '~~/utils/formatters'
+import { toColumn } from '@/utils'
 import AppActionBtns from '@/components/AppActionBtns.vue'
 import {
   Model,
@@ -8,21 +7,6 @@ import {
   BtnModelTableActionsDefinition,
   BtnActionsDefinition,
 } from '@/types'
-
-function toColumn(e: MinimalColumnDefinition) {
-  const definition = typeof e == 'string' ? { name: e } : e
-
-  const { name, field = name, label = titleCase(name) } = definition
-
-  return {
-    align: 'left',
-    format: getFormatter(name),
-    sortable: true,
-    ...definition,
-    field,
-    label,
-  }
-}
 
 export default defineComponent({
   inheritAttrs: false,
@@ -37,7 +21,7 @@ const props = defineProps<{
 }>()
 
 const supportsSearch = computed(() =>
-  props.model.docs.list.definitions.some(
+  props.model.docs.list?.definitions.some(
     (d: any) =>
       d.kind == 'OperationDefinition' &&
       d.variableDefinitions.some((e: any) => e.variable.name.value == 'query')
@@ -78,6 +62,7 @@ const {
 // more general purpose type for actions. ModelTableAction type
 // should be derived from that.
 const tableActions = computed<BtnActionsDefinition>(() => [
+  ...(props.actions || []),
   [
     'grid',
     {
@@ -120,16 +105,14 @@ const tableActions = computed<BtnActionsDefinition>(() => [
 </script>
 
 <template>
-  <q-table
+  <AppList
+    row-key="id"
     v-bind="{ ...$attrs as any, columns, title, ...config }"
     :rows="data?.data || []"
     :loading="pending"
+    :actions="tableActions"
   >
-    <template #top>
-      <div class="q-table__control">
-        <div class="q-table__title">{{ title }}</div>
-      </div>
-      <q-space />
+    <template #secondary-actions>
       <q-input
         v-if="supportsSearch"
         v-model="variables.query"
@@ -141,11 +124,7 @@ const tableActions = computed<BtnActionsDefinition>(() => [
       >
         <template v-slot:append> <q-icon name="search" /> </template
       ></q-input>
-      <AppActionBtns :actions="tableActions"></AppActionBtns>
     </template>
-    <template #body-cell="scope">
-      <q-td :props="scope"> <VNode :node="scope.value" /> </q-td>
-    </template>
-  </q-table>
+  </AppList>
 </template>
 <style></style>

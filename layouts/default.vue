@@ -1,4 +1,7 @@
-<script lang="ts">
+<script lang="tsx">
+import { QBtn } from 'quasar'
+import ForeignServersModel from '@/components/entities/externals'
+
 function useDrawerState() {
   const states = [
     { modelValue: true, mini: false },
@@ -32,9 +35,30 @@ export default {
     const { dark } = useQuasar()
     const { $auth, $router } = useNuxtApp()
     const drawerStates = reactive(useDrawerState())
-
+    const imports = ForeignServersModel.useList()
+    const router = useRouter()
     const nav = computed(() => [
-      { to: '/servers', name: 'Servers', icon: 'storage' },
+      {
+        to: '/servers',
+        name: 'Servers',
+        icon: 'storage',
+        append: router.currentRoute.value.name != 'foreign-servers' &&
+          imports.result.value?.data?.length && (
+            <QBtn
+              size="xs"
+              color="positive"
+              icon="post_add"
+              rounded
+              onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push('/foreign-servers')
+              }}
+            >
+              {imports.result.value?.data?.length}
+            </QBtn>
+          ),
+      },
       { to: '/users', name: 'Users', icon: 'people' },
       true,
       {
@@ -96,6 +120,9 @@ export default {
               </q-item-section>
 
               <q-item-section> {{ item.name }} </q-item-section>
+              <q-item-section side v-if="item.append">
+                <VNode :node="item.append" />
+              </q-item-section>
             </q-item>
           </template>
         </q-list>

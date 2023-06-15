@@ -2,6 +2,8 @@ import { ServerFragment, PeerFragment } from '@/gql'
 import { Notify } from 'quasar'
 import { DocumentNode } from '@apollo/client'
 import { MutateResult } from '@vue/apollo-composable'
+import { MinimalColumnDefinition } from '@/types'
+import { getFormatter } from '@/utils/formatters'
 
 export function cammelCase(s: string) {
   return s
@@ -169,4 +171,19 @@ export function callMutation<TDoc extends DocumentNode>(
 
   // @ts-ignore
   return promise
+}
+
+export function toColumn(e: MinimalColumnDefinition) {
+  const definition = typeof e == 'string' ? { name: e } : e
+
+  const { name, field = name, label = titleCase(name) } = definition
+
+  return {
+    align: 'left',
+    format: getFormatter(name),
+    sortable: true,
+    ...definition,
+    field,
+    label,
+  }
 }

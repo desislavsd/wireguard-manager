@@ -569,6 +569,22 @@ export type UserChangedEvent = {
   node: User;
 };
 
+export type ForeignServersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ForeignServersQuery = { __typename?: 'Query', data: Array<{ __typename?: 'ForeignServer', name: string, type: string, publicKey: string, listenPort: number, firewallMark: number, foreignInterface: { __typename?: 'ForeignInterface', name: string, addresses: Array<string>, mtu: number }, peers: Array<{ __typename?: 'ForeignPeer', publicKey: string, endpoint?: string | null, allowedIps?: Array<string> | null, persistentKeepAliveInterval: number, lastHandshakeTime?: Date | null, receiveBytes: number, transmitBytes: number, protocolVersion: number }> }> };
+
+export type ImportForeignServerMutationVariables = Exact<{
+  input: ImportForeignServerInput;
+}>;
+
+
+export type ImportForeignServerMutation = { __typename?: 'Mutation', mutation: { __typename?: 'ImportForeignServerPayload', clientMutationId?: string | null } };
+
+export type ForeignServerFragment = { __typename?: 'ForeignServer', name: string, type: string, publicKey: string, listenPort: number, firewallMark: number, foreignInterface: { __typename?: 'ForeignInterface', name: string, addresses: Array<string>, mtu: number }, peers: Array<{ __typename?: 'ForeignPeer', publicKey: string, endpoint?: string | null, allowedIps?: Array<string> | null, persistentKeepAliveInterval: number, lastHandshakeTime?: Date | null, receiveBytes: number, transmitBytes: number, protocolVersion: number }> };
+
+export type ForeignPeerFragment = { __typename?: 'ForeignPeer', publicKey: string, endpoint?: string | null, allowedIps?: Array<string> | null, persistentKeepAliveInterval: number, lastHandshakeTime?: Date | null, receiveBytes: number, transmitBytes: number, protocolVersion: number };
+
 export type ServersQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
 }>;
@@ -717,6 +733,35 @@ export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ViewerQuery = { __typename?: 'Query', viewer: { __typename?: 'User', id: string, email: string, createdAt: Date, updatedAt: Date } };
 
+export const ForeignPeerFragmentDoc = gql`
+    fragment ForeignPeer on ForeignPeer {
+  publicKey
+  endpoint
+  allowedIps
+  persistentKeepAliveInterval
+  lastHandshakeTime
+  receiveBytes
+  transmitBytes
+  protocolVersion
+}
+    `;
+export const ForeignServerFragmentDoc = gql`
+    fragment ForeignServer on ForeignServer {
+  foreignInterface {
+    name
+    addresses
+    mtu
+  }
+  name
+  type
+  publicKey
+  listenPort
+  firewallMark
+  peers {
+    ...ForeignPeer
+  }
+}
+    ${ForeignPeerFragmentDoc}`;
 export const ServerWithoutPeersFragmentDoc = gql`
     fragment ServerWithoutPeers on Server {
   id
@@ -808,6 +853,62 @@ export const ViewerFragmentDoc = gql`
   updatedAt
 }
     `;
+export const ForeignServersDocument = gql`
+    query ForeignServers {
+  data: foreignServers {
+    ...ForeignServer
+  }
+}
+    ${ForeignServerFragmentDoc}`;
+
+/**
+ * __useForeignServersQuery__
+ *
+ * To run a query within a Vue component, call `useForeignServersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useForeignServersQuery` returns an object from Apollo Client that contains result, loading and error properties
+ * you can use to render your UI.
+ *
+ * @param options that will be passed into the query, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/query.html#options;
+ *
+ * @example
+ * const { result, loading, error } = useForeignServersQuery();
+ */
+export function useForeignServersQuery(options: VueApolloComposable.UseQueryOptions<ForeignServersQuery, ForeignServersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<ForeignServersQuery, ForeignServersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<ForeignServersQuery, ForeignServersQueryVariables>> = {}) {
+  return VueApolloComposable.useQuery<ForeignServersQuery, ForeignServersQueryVariables>(ForeignServersDocument, {}, options);
+}
+export function useForeignServersLazyQuery(options: VueApolloComposable.UseQueryOptions<ForeignServersQuery, ForeignServersQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<ForeignServersQuery, ForeignServersQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<ForeignServersQuery, ForeignServersQueryVariables>> = {}) {
+  return VueApolloComposable.useLazyQuery<ForeignServersQuery, ForeignServersQueryVariables>(ForeignServersDocument, {}, options);
+}
+export type ForeignServersQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<ForeignServersQuery, ForeignServersQueryVariables>;
+export const ImportForeignServerDocument = gql`
+    mutation ImportForeignServer($input: ImportForeignServerInput!) {
+  mutation: importForeignServer(input: $input) {
+    clientMutationId
+  }
+}
+    `;
+
+/**
+ * __useImportForeignServerMutation__
+ *
+ * To run a mutation, you first call `useImportForeignServerMutation` within a Vue component and pass it any options that fit your needs.
+ * When your component renders, `useImportForeignServerMutation` returns an object that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - Several other properties: https://v4.apollo.vuejs.org/api/use-mutation.html#return
+ *
+ * @param options that will be passed into the mutation, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/mutation.html#options;
+ *
+ * @example
+ * const { mutate, loading, error, onDone } = useImportForeignServerMutation({
+ *   variables: {
+ *     input: // value for 'input'
+ *   },
+ * });
+ */
+export function useImportForeignServerMutation(options: VueApolloComposable.UseMutationOptions<ImportForeignServerMutation, ImportForeignServerMutationVariables> | ReactiveFunction<VueApolloComposable.UseMutationOptions<ImportForeignServerMutation, ImportForeignServerMutationVariables>> = {}) {
+  return VueApolloComposable.useMutation<ImportForeignServerMutation, ImportForeignServerMutationVariables>(ImportForeignServerDocument, options);
+}
+export type ImportForeignServerMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<ImportForeignServerMutation, ImportForeignServerMutationVariables>;
 export const ServersDocument = gql`
     query Servers($query: String) {
   data: servers(query: $query) {
@@ -1431,6 +1532,7 @@ export function useViewerLazyQuery(options: VueApolloComposable.UseQueryOptions<
 export type ViewerQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<ViewerQuery, ViewerQueryVariables>;
 export const namedOperations = {
   Query: {
+    ForeignServers: 'ForeignServers',
     Servers: 'Servers',
     Server: 'Server',
     Peers: 'Peers',
@@ -1440,6 +1542,7 @@ export const namedOperations = {
     Viewer: 'Viewer'
   },
   Mutation: {
+    ImportForeignServer: 'ImportForeignServer',
     CreateServer: 'CreateServer',
     UpdateServer: 'UpdateServer',
     DeleteServer: 'DeleteServer',
@@ -1457,6 +1560,8 @@ export const namedOperations = {
     onServerChanged: 'onServerChanged'
   },
   Fragment: {
+    ForeignServer: 'ForeignServer',
+    ForeignPeer: 'ForeignPeer',
     ServerWithoutPeers: 'ServerWithoutPeers',
     Server: 'Server',
     PeerWithoutServer: 'PeerWithoutServer',

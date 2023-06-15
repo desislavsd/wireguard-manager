@@ -125,7 +125,7 @@ export default defineComponent({
           else groups.at(-1)?.push(action)
           return groups
         },
-        [[]] as typeof actions.value[]
+        [[]] as (typeof actions.value)[]
       )
     )
 
@@ -135,9 +135,11 @@ export default defineComponent({
           const btns = actions.map(([name, opts, subActions]) => (
             <AppBtn
               {...{
+                key: name,
                 size: 'sm',
                 outline: true,
                 ...opts,
+                label: undefined,
                 onClick: opts.onClick?.bind(null, props.scope),
               }}
               {...(!!subActions?.length && { iconRight: 'expand_more' })}

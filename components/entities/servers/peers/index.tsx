@@ -6,7 +6,6 @@ import Model from '@/utils/model'
 import { MinimalColumnDefinition } from '~~/types'
 import openDialog from '~~/utils/openDialog'
 import { Servers } from '../'
-import { QBtn, Notify } from 'quasar'
 import { UseQueryReturn } from '@vue/apollo-composable'
 export type Item = PeerFragment & { privateKey?: string }
 
@@ -38,24 +37,7 @@ export class Peers extends Model {
       ),
     },
     'description',
-    {
-      name: 'publicKey',
-      format(v: string) {
-        if (!v) return ''
-        return (
-          <QBtn
-            color="secondary"
-            dense
-            flat
-            size="xs"
-            class="-overflow-hidden -text-ellipsis -min-w-0 -gap-2 -pl-0"
-            onClick={() => copyToClipboard(v)}
-          >
-            {v}
-          </QBtn>
-        )
-      },
-    },
+    'publicKey',
     'createdAt',
   ]
   static schemaAdd = schemaAdd
