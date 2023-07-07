@@ -74,13 +74,19 @@ export class ForeignServers extends Model {
   get $model(): typeof ForeignServers {
     return super.$model as typeof ForeignServers
   }
+  get $id() {
+    return this.name
+  }
+  set $id(v) {
+    this.name = v
+  }
 
   edit() {
     return super.edit({ component: EditDialog })
   }
 
   async promptImport() {
-    await openDialog({
+    return await openDialog({
       componentProps: {
         content: (
           <>
@@ -97,14 +103,16 @@ export class ForeignServers extends Model {
         onSubmit: () => this.import(),
       },
     })
-
-    return this.import()
   }
 
   async import(opts: Partial<{ noflush: boolean }> = {}) {
-    const res = await callMutation(ImportForeignServerDocument, {
-      input: schemaImport.parse(this),
-    })
+    const res = await callMutation(
+      ImportForeignServerDocument,
+      {
+        input: schemaImport.parse(this),
+      },
+      { refetchQueries: ['Servers', 'ForeignServers'] }
+    )
     if (!opts.noflush) {
       this.$model.flush()
       ServersModel.flush()

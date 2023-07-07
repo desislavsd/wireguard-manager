@@ -579,7 +579,7 @@ export type ImportForeignServerMutationVariables = Exact<{
 }>;
 
 
-export type ImportForeignServerMutation = { __typename?: 'Mutation', mutation: { __typename?: 'ImportForeignServerPayload', clientMutationId?: string | null } };
+export type ImportForeignServerMutation = { __typename?: 'Mutation', mutation: { __typename?: 'ImportForeignServerPayload', clientMutationId?: string | null, data?: { __typename?: 'Server', createdAt: Date, updatedAt: Date, deletedAt?: Date | null, id: string, name: string, description: string, enabled: boolean, running: boolean, publicKey: string, listenPort?: number | null, firewallMark?: number | null, address: string, dns?: Array<string> | null, mtu: number, peers?: Array<{ __typename?: 'Peer', id: string, name: string, description: string, publicKey: string, allowedIPs?: Array<string> | null, endpoint: string, presharedKey: string, persistentKeepalive?: number | null, createdAt: Date, updatedAt: Date }> | null, interfaceStats?: { __typename?: 'ServerInterfaceStats', rxPackets: number, txPackets: number, rxBytes: number, txBytes: number, rxErrors: number, txErrors: number, rxDropped: number, txDropped: number, multicast: number, collisions: number, rxLengthErrors: number, rxOverErrors: number, rxCrcErrors: number, rxFrameErrors: number, rxFifoErrors: number, rxMissedErrors: number, txAbortedErrors: number, txCarrierErrors: number, txFifoErrors: number, txHeartbeatErrors: number, txWindowErrors: number, rxCompressed: number, txCompressed: number } | null } | null } };
 
 export type ForeignServerFragment = { __typename?: 'ForeignServer', name: string, type: string, publicKey: string, listenPort: number, firewallMark: number, foreignInterface: { __typename?: 'ForeignInterface', name: string, addresses: Array<string>, mtu: number }, peers: Array<{ __typename?: 'ForeignPeer', publicKey: string, endpoint?: string | null, allowedIps?: Array<string> | null, persistentKeepAliveInterval: number, lastHandshakeTime?: Date | null, receiveBytes: number, transmitBytes: number, protocolVersion: number }> };
 
@@ -884,9 +884,12 @@ export const ImportForeignServerDocument = gql`
     mutation ImportForeignServer($input: ImportForeignServerInput!) {
   mutation: importForeignServer(input: $input) {
     clientMutationId
+    data: server {
+      ...Server
+    }
   }
 }
-    `;
+    ${ServerFragmentDoc}`;
 
 /**
  * __useImportForeignServerMutation__

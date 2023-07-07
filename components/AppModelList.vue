@@ -106,7 +106,7 @@ const tableActions = computed<BtnActionsDefinition>(() => [
 
 <template>
   <AppList
-    row-key="id"
+    row-key="$id"
     v-bind="{ ...$attrs as any, columns, title, ...config }"
     :rows="data?.data || []"
     :loading="pending"

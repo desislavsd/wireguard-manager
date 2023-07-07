@@ -267,8 +267,8 @@ export class Model<T = unknown> {
   }
 
   static flush() {
-    // return client.refetchQueries({ include: 'all' })
-    return client.refetchQueries({ include: this.operations })
+    return client.refetchQueries({ include: 'all' })
+    // return client.refetchQueries({ include: this.operations })
   }
 
   static async mutate(...args: Parameters<typeof callMutation>) {

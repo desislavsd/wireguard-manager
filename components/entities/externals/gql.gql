@@ -7,6 +7,9 @@ query ForeignServers {
 mutation ImportForeignServer($input: ImportForeignServerInput!) {
   mutation: importForeignServer(input: $input) {
     clientMutationId
+    data: server {
+      ...Server
+    }
   }
 }
 

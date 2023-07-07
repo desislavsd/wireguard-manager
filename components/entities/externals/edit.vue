@@ -19,7 +19,7 @@ const tableConfig = {
     @submit="submit"
     :title="`${item.$model.title(1)} ${item.name}`"
     :action="{ label: 'import', icon: 'post_add' }"
-    card-classes="-w-full"
+    card-classes="-w-full externals-edit-modal"
   >
     <div class="-grid -gap-3">
       <div>
@@ -66,4 +66,8 @@ const tableConfig = {
     </div>
   </AppDialog>
 </template>
-<style></style>
+<style>
+.externals-edit-modal .q-btn.bg-negative {
+  display: none;
+}
+</style>

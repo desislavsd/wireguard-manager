@@ -4,7 +4,7 @@ function getColorsNamesFromCSSVariables() {
       [...(document.styleSheets as any)]
         .map((e) => [...e.cssRules])
         .flat()
-        .find((e) => e.style?.[0]?.startsWith('--c-'))?.style
+        .find((e) => e.style?.[0]?.startsWith('--c-'))?.style || {}
     )
       ?.filter((e: any) => e.startsWith('--c-'))
       ?.map((e: any) => e.replace('--c-', '')?.trim()) || {}
