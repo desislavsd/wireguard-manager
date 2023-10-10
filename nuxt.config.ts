@@ -54,6 +54,7 @@ export default defineNuxtConfig({
         httpEndpoint: 'IGNORE_THIS',
       },
     },
+    tokenStorage: 'localStorage',
   },
   quasar: {
     // string[]: https://quasar.dev/quasar-plugins

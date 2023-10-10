@@ -20,6 +20,7 @@
     "@graphql-codegen/typescript": "^3.0.3",
     "@graphql-codegen/typescript-operations": "^3.0.3",
     "@graphql-codegen/typescript-vue-apollo": "^3.3.7",
+    "@nuxt/devtools": "^0.8.0",
     "@nuxtjs/apollo": "5.0.0-alpha.6",
     "@pinia/nuxt": "^0.4.7",
     "@quasar/extras": "^1.16.1",
