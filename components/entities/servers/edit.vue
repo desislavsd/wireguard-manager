@@ -76,8 +76,10 @@ async function submit() {
       />
     </div>
     <q-select
-      v-model.trim="form.dns"
+      :model-value="form.dns"
+      @update:model-value="form.dns = $event?.length ? $event : null"
       label="DNS"
+      name="dns"
       :rules="schema.shape.dns.$rules"
       new-value-mode="add-unique"
       multiple

@@ -24,7 +24,7 @@ export const schemaAdd = z.object({
   name: z.string().min(3).default(''),
   address: z.string().default(''),
   description: z.string().default(''),
-  dns: z.string().array().min(1).default([]),
+  dns: z.string().array().min(1).default([]).or(z.null()),
   enabled: z.boolean().optional().default(false),
   firewallMark: z.number().optional(),
   listenPort: z.number().min(0).max(65535).optional(),
@@ -36,7 +36,7 @@ export const schemaAdd = z.object({
 export const schemaUpdate = z.object({
   address: z.string().optional().default(''),
   description: z.string().optional().default(''),
-  dns: z.string().array().min(1).optional().default([]),
+  dns: z.string().array().min(1).optional().default([]).or(z.null()),
   enabled: z.boolean().optional().default(false),
   firewallMark: z.number().optional(),
   listenPort: z.number().min(0).max(65535).optional(),
